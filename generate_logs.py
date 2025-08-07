@@ -8,7 +8,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from generators.log_entry_factory import generate_log_lines
+from generators.log_entry_factory import generate_log_lines, generate_log_entries
+from exporters.csv_exporter import export_to_csv
 
 def parse_args():
     """Parse command line arguments."""
@@ -118,26 +119,51 @@ def main():
             print(f"End date: {end_date.date()}", file=sys.stderr)
     
     try:
-        # Generate log lines
-        log_lines = generate_log_lines(args.count, args.format)
-        
-        # Output to file or stdout
-        if args.output:
-            output_path = Path(args.output)
-            
-            # Create parent directories if needed
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            with open(output_path, 'w', encoding='utf-8') as f:
-                for line in log_lines:
-                    f.write(line + '\n')
-            
-            if not args.quiet:
-                print(f"Generated {len(log_lines)} log entries to {output_path}", file=sys.stderr)
+        # Handle CSV format specially to include headers
+        if args.format == "csv":
+            if args.output:
+                output_path = Path(args.output)
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                
+                # Generate log entries and export to CSV with headers
+                log_entries = generate_log_entries(args.count)
+                export_to_csv(log_entries, str(output_path))
+                
+                if not args.quiet:
+                    print(f"Generated {len(log_entries)} log entries to {output_path}", file=sys.stderr)
+            else:
+                # For CSV to stdout, we need to use the CSV exporter
+                import tempfile
+                with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.csv') as tmp_file:
+                    log_entries = generate_log_entries(args.count)
+                    export_to_csv(log_entries, tmp_file.name)
+                
+                # Read and output the CSV content
+                with open(tmp_file.name, 'r') as f:
+                    print(f.read(), end='')
+                
+                # Clean up temp file
+                import os
+                os.unlink(tmp_file.name)
         else:
-            # Output to stdout
-            for line in log_lines:
-                print(line)
+            # Generate log lines for other formats
+            log_lines = generate_log_lines(args.count, args.format)
+            
+            # Output to file or stdout
+            if args.output:
+                output_path = Path(args.output)
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    for line in log_lines:
+                        f.write(line + '\n')
+                
+                if not args.quiet:
+                    print(f"Generated {len(log_lines)} log entries to {output_path}", file=sys.stderr)
+            else:
+                # Output to stdout
+                for line in log_lines:
+                    print(line)
     
     except Exception as e:
         print(f"Error generating log entries: {e}", file=sys.stderr)

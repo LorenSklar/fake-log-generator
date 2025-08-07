@@ -165,7 +165,7 @@ cython_debug/
 *.csv
 *.json
 *.log
-output/
+outputs/
 logs/
 data/
 temp/

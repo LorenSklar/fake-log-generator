@@ -2,23 +2,23 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Tests](https://github.com/yourusername/fake_log_generator/workflows/CI/badge.svg)](https://github.com/yourusername/fake_log_generator/actions)
-[![Codecov](https://codecov.io/gh/yourusername/fake_log_generator/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/fake_log_generator)
-[![PyPI](https://img.shields.io/pypi/v/fake-log-generator.svg)](https://pypi.org/project/fake-log-generator/)
 
 A Python tool for generating realistic, fake log entries suitable for testing, development, and learning purposes. This generator creates web server log entries that mimic real-world HTTP request/response patterns.
 
 ## 🚀 Quick Start
 
 ```bash
-# Generate 100 JSON log entries
-python generate_logs.py 100
+# Generate 100 JSON log entries to file
+python generate_logs.py 100 --output outputs/logs.json
 
 # Generate CSV for PostgreSQL import
-python generate_logs.py 1000 --format csv --output logs.csv
+python generate_logs.py 1000 --format csv --output outputs/logs.csv
 
 # Generate traditional log format
-python generate_logs.py 500 --format log --output app.log
+python generate_logs.py 500 --format log --output outputs/app.log
+
+# Generate logs for testing (small sample)
+python generate_logs.py 10 --output outputs/test_logs.json
 ```
 
 ## ✨ Features
@@ -128,13 +128,13 @@ Options:
 python generate_logs.py 100 --start-date 2024-01-01 --end-date 2024-01-31
 
 # Generate CSV logs for PostgreSQL import
-python generate_logs.py 10000 --format csv --output production_logs.csv
+python generate_logs.py 10000 --format csv --output outputs/production_logs.csv
 
 # Generate traditional log format for log analysis
-python generate_logs.py 500 --format log --output app.log
+python generate_logs.py 500 --format log --output outputs/app.log
 
 # Generate logs quietly (no progress output)
-python generate_logs.py 1000 --quiet
+python generate_logs.py 1000 --quiet --output outputs/quiet_logs.json
 ```
 
 ## Programmatic Usage
@@ -329,6 +329,13 @@ COPY log_entries FROM '/path/to/logs.csv' WITH (FORMAT csv, HEADER true);
 - [ ] Scale to 10,000 entries for stress testing
 - [ ] Scale to 100,000+ entries for production-like datasets
 - [ ] Add GraphQL endpoint for querying generated logs
+
+## TODO
+- [ ] Publish package to [PyPI](https://pypi.org/) or remove the PyPI badge
+- [ ] Set up GitHub Actions CI and connect the Tests badge
+- [ ] Configure test coverage reporting with [Codecov](https://codecov.io/)
+- [ ] Replace license badge with an OSI-approved license (e.g., MIT)
+- [ ] Add proper versioning and release notes
 
 ## Requirements
 
